@@ -9,8 +9,9 @@ The entire application is containerized with Docker, so development is easily po
 
 ## Getting Started
 
-1. Build docker container
+1. Build docker container and storage volume
 ```cmd
+docker volume create --name=photoanalysisserver_images
 docker-compose build
 ```
 2. Start server and container
