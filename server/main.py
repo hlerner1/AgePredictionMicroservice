@@ -1,11 +1,18 @@
 import uuid
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 import logging
-from model import predict
+import asyncio
+from model import predict, init
+from pydantic import BaseSettings
 
+
+class Settings(BaseSettings):
+    ready_to_predict = False
+
+settings = Settings()
 app = FastAPI()
 
 # Must have CORSMiddleware to enable localhost client and server
@@ -33,18 +40,23 @@ async def root():
     return {"running!"}
 
 
-@app.get("/predict")
-async def get_predict_results():
-    # TODO: Check if batch with unique key is complete
-    # TODO: Return result if batch is done else return buffering code
-    return {"result": "complete"}
+@app.post("/status")
+async def initial_startup():
+    # Run startup task async
+    init_task = asyncio.create_task(init())
+    settings.ready_to_predict = True
+    return {"result": str(settings.ready_to_predict)}
+
+
+@app.get("/status")
+async def check_status():
+    return {"result": str(settings.ready_to_predict)}
 
 
 @app.post("/predict")
-async def create_prediction():
-    unique_key = str(uuid.uuid4())
-    imageFile = None
+async def create_prediction(filename: str = ""):
+    if not settings.ready_to_predict:
+        return HTTPException(status_code=503, detail="Model has not been configured. Please run initial startup before attempting to receive predictions.")
 
-    # TODO: Ensure this is done in the background
-    result = predict(imageFile)
-    return {"key": unique_key}
+    result = predict(None)
+    return {"result": result}
