@@ -60,6 +60,7 @@ async def create_prediction(filename: str = ""):
     if not settings.ready_to_predict:
         return HTTPException(status_code=503, detail="Model has not been configured. Please run initial startup before attempting to receive predictions.")
 
+
     image_file_path = 'images/'+filename
     image_file = open(image_file_path, 'r')
     result = predict(image_file)
