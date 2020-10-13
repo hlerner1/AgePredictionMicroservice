@@ -3,10 +3,10 @@ from matplotlib.image import imread
 import cv2
 import os
 import numpy as np
-from data_preprocessor import TransformDataset
+from SodaNet.data_preprocessor import TransformDataset
 from functools import reduce
 from tensorflow.keras.utils import to_categorical
-from rectified_adam import RAdam
+from SodaNet.rectified_adam import RAdam
 
 
 def get_mapped_list(path):

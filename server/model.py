@@ -1,9 +1,8 @@
 import asyncio
 
 # Import model
-from sodanet_model import SodaModel
+from SodaNet.sodanet_model import SodaModel
 from matplotlib.image import imread
-from utilities import compute_accuracy_labelwise
 from PIL import Image
 import io
 
@@ -27,6 +26,7 @@ def predict(image_file):
     Interface method between model and server. This signature must not be
     changed and your model must be able to predict given this input
     """
+    model = SodaModel()
     if model == None:
         raise RuntimeError("SodaNet model is not loaded properly")
 

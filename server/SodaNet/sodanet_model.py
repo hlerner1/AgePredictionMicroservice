@@ -1,6 +1,6 @@
 import tensorflow as tf
 from keras.models import load_model
-from rectified_adam import RAdam
+from SodaNet.rectified_adam import RAdam
 import numpy as np
 import sys
 from google_drive_downloader import GoogleDriveDownloader as g
@@ -8,7 +8,7 @@ import os
 from cv2 import resize, normalize, INTER_AREA, NORM_MINMAX, CV_32F
 from matplotlib.image import imread
 import gdown
-from retrainable_module import retrain_model
+from SodaNet.retrainable_module import retrain_model
 
 # Global Variables
 DEFAULT_OUTPUT_SHAPE = 160
