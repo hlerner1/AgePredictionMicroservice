@@ -30,7 +30,7 @@ def predict(image_file):
     if model == None:
         raise RuntimeError("SodaNet model is not loaded properly")
 
-    model.load_image_from_file(image_file.name)
+    model.load_image(imread(image_file))
     predicted_value, im_ret = model.evaluate()
     predicted_value_converted_to_yn = "Yes" if str(predicted_value) == 1 else "No"
     return {
