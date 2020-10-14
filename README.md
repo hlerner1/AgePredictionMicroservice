@@ -142,5 +142,5 @@ below refers to the container name defined on the first line of the `.env` file
    docker cp $LOCALPATH/$IMAGE $NAME:images/$IMAGE
    ```
    In this example, `$IMAGE` refers to the image file that is being transferred and `$LOCALPATH` refers to the
-   path leading up to the image file (example: `$LOCALPATH=~/Downloads/images`, `$IMAGE=`my_picture.png`).
+   path leading up to the image file (example: `$LOCALPATH=~/Downloads/images`, `$IMAGE=my_picture.png`).
    2. Send a `POST` request to `localhost:$PORT/predict` with the following arguments key:`filename` body:`$IMAGE`.
