@@ -71,13 +71,36 @@ Start application
 docker-compose up -d
 ```
 
+---
 
 ## Model Development
 
 When working with models in this template, there are some useful commands and intricacies 
 to keep in mind.
 
+### [Dev Feature] Creating a Model
+This template is designed to allow easy deployment of pre-trained machine learning models. To successfully add a model
+to this template, there are two methods in the `model.py` file that must be implemented:
+- `init`
+- `predict`
 
+The `init` method in `model.py` will be run once upon initial startup. This method should fetch all needed files and ensure that
+the model is ready to make predictions.
+
+The `predict` method is what is used by the template to return prediction results. This method is passed a [file-like object](https://docs.python.org/3/library/io.html)
+containing the input image. The output of this method is a dictionary containing the results of the model prediction.
+
+You may create any number of additional helper files in this template, and they will be automatically included in the
+Docker container. However, note that the signatures and return types of `init` and `predict` in `model.py` must not be changed.
+
+
+### [Dev Feature] Installing Packages
+When working with models, it is likely that you will need to install additional packages such as numpy.
+
+To install additional requirements, add them to the requirements.txt file locally. Then, you can rerun the `docker-compose build` command and
+the packages will now be installed.
+
+**NOTE:** Do **NOT** connect to the container and then install packages with pip. If you do this, then the installed packages will be lost when you restart the container! 
 
 
 ### [Dev Command] Connect to Application's Terminal
@@ -93,6 +116,31 @@ docker exec -it $NAME bash
 > docker exec -it soda_detect bash
 > ```
 
+---
 
 ## Web Server Configuration
 
+This template serves the results of model predictions on a web API that can be easily accessed by other
+applications. When a remote server wishes to use the model contained in the template, it will do the following
+
+1. `POST /status`: This will run the `init` method in `model.py` to ensure the model is ready for predicting.
+2. `GET /status`: This will ensure that the model is ready to make predictions.
+3. `POST /predict`: This will create a new predicted based off of the passed image file name in the request body. 
+
+#### Testing Model Predictions
+If you wish to test the webserver results, a good tool to use is [Postman](postman.com). This is used for simulating API
+calls and viewing the results. To do the steps above, you may do the following in Postman:
+
+**Note:** `$PORT` in the steps below refers to the port number defined on line 2 of the `.env` file. `$NAME` in the steps 
+below refers to the container name defined on the first line of the `.env` file
+
+1. Send a `POST` request to `localhost:$PORT/status` with an empty body.
+2. Send a `GET` request to `localhost:$PORT/status`. You should receive `"result": "True"` as a response.
+3. Upload image file to Docker volume and `POST` the `/predict` endpoint:
+    1. Run the following command to transfer an image file from your local computer to the Docker image volume.
+    ```cmd
+   docker cp $LOCALPATH/$IMAGE $NAME:images/$IMAGE
+   ```
+   In this example, `$IMAGE` refers to the image file that is being transferred and `$LOCALPATH` refers to the
+   path leading up to the image file (example: `$LOCALPATH=~/Downloads/images`, `$IMAGE=`my_picture.png`).
+   2. Send a `POST` request to `localhost:$PORT/predict` with the following arguments key:`filename` body:`$IMAGE`.

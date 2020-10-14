@@ -61,7 +61,11 @@ async def create_prediction(filename: str = ""):
         return HTTPException(status_code=503, detail="Model has not been configured. Please run initial startup before attempting to receive predictions.")
 
     image_file_path = 'images/'+filename
-    image_file = open(image_file_path, 'r')
+    try:
+        image_file = open(image_file_path, 'r')
+    except IOError:
+        return HTTPException(status_code=400, detail="Unable to open image file. Provided filename can not be found on server.")
+
     result = predict(image_file)
     image_file.close()
     return {"result": result}
