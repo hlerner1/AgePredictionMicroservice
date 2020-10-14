@@ -47,6 +47,8 @@ Open the file `.env` in the root directory. Change the first line from:
 
 Once you have configured the template, you must run these commands to build and run the model.
 
+**As mentioned above, all of these commands must be run in the root directory of the project.**
+
 #### [Build & Run] Quick Setup
 
 You may run `setup/setup.sh` in your terminal to quickly set up this application. If that fails, detailed steps
