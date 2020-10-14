@@ -47,6 +47,11 @@ Open the file `.env` in the root directory. Change the first line from:
 
 Once you have configured the template, you must run these commands to build and run the model.
 
+#### [Build & Run] Quick Setup
+
+You may run `setup/setup.sh` in your terminal to quickly set up this application. If that fails, detailed steps
+are included below for manual setup. If this is successful however, you may skip all of the following steps.
+
 #### [Build & Run] Step 0
 If this is the first time you are setting up a model template, you must manually create a "volume".
 This is used to track and share uploaded images.
