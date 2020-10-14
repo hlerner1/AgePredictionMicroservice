@@ -24,6 +24,7 @@ LABELS_SUNATTRIBUTE_URL = 'https://raw.githubusercontent.com/csailvision/places3
 SCENE_ATTRIBUTE_WIDERESNET18_URL = 'http://places2.csail.mit.edu/models_places365/W_sceneattribute_wideresnet18.npy'
 WIDERESNET18_TAR_URL = 'http://places2.csail.mit.edu/models_places365/'
 WIDERESNET18_URL = 'https://raw.githubusercontent.com/csailvision/places365/master/wideresnet.py'
+MODEL_DIRECTORY = 'SceneDetection'
 
 # function to ensure presence of the list of scene categories, list of scene 
 # attributes and lookup table of scene category classifying as indoor or 
@@ -31,12 +32,12 @@ WIDERESNET18_URL = 'https://raw.githubusercontent.com/csailvision/places365/mast
 def load_labels():
     # fetching the list of scene categories if not already present
     file_name_category = 'categories_places365.txt'
-    if not os.access(file_name_category, os.W_OK):
-        os.system('wget ' + CATEGORIES_PLACES_URL)
+    if not os.access(os.path.join(MODEL_DIRECTORY, file_name_category), os.W_OK):
+        os.system('wget ' + CATEGORIES_PLACES_URL + ' -P ' + MODEL_DIRECTORY)
 
     # listing all the scene categories in a tuple
     classes = list()
-    with open(file_name_category) as class_file:
+    with open(os.path.join(MODEL_DIRECTORY, file_name_category)) as class_file:
         for line in class_file:
             classes.append(line.strip().split(' ')[0][3:])
     classes = tuple(classes)
@@ -44,11 +45,11 @@ def load_labels():
     # fetching the lookup table given an input scene to check if its indoor or
     # outdoor 
     file_name_IO = 'IO_places365.txt'
-    if not os.access(file_name_IO, os.W_OK):
-        os.system('wget ' + IO_PLACES_URL)
+    if not os.access(os.path.join(MODEL_DIRECTORY, file_name_IO), os.W_OK):
+        os.system('wget ' + IO_PLACES_URL + ' -P ' + MODEL_DIRECTORY)
 
     # listing the table in an array
-    with open(file_name_IO) as f:
+    with open(os.path.join(MODEL_DIRECTORY, file_name_IO)) as f:
         lines = f.readlines()
         labels_IO = []
         for line in lines:
@@ -58,15 +59,15 @@ def load_labels():
 
     # fetching scene attributes if not already present
     file_name_attribute = 'labels_sunattribute.txt'
-    if not os.access(file_name_attribute, os.W_OK):
-        os.system('wget ' + LABELS_SUNATTRIBUTE_URL)
-    with open(file_name_attribute) as f:
+    if not os.access(os.path.join(MODEL_DIRECTORY, file_name_attribute), os.W_OK):
+        os.system('wget ' + LABELS_SUNATTRIBUTE_URL + ' -P ' + MODEL_DIRECTORY)
+    with open(os.path.join(MODEL_DIRECTORY, file_name_attribute)) as f:
         lines = f.readlines()
         labels_attribute = [item.rstrip() for item in lines]
     file_name_W = 'W_sceneattribute_wideresnet18.npy'
-    if not os.access(file_name_W, os.W_OK):
-        os.system('wget ' + SCENE_ATTRIBUTE_WIDERESNET18_URL)
-    W_attribute = np.load(file_name_W)
+    if not os.access(os.path.join(MODEL_DIRECTORY, file_name_W), os.W_OK):
+        os.system('wget ' + SCENE_ATTRIBUTE_WIDERESNET18_URL + ' -P ' + MODEL_DIRECTORY)
+    W_attribute = np.load(os.path.join(MODEL_DIRECTORY, file_name_W))
 
     return classes, labels_IO, labels_attribute, W_attribute
 
@@ -88,16 +89,16 @@ def load_model(features_blobs):
 
 	# fetch the pretrained weights of the model if not already present
     model_file = 'wideresnet18_places365.pth.tar'
-    if not os.access(model_file, os.W_OK):
-        os.system('wget ' + WIDERESNET18_TAR_URL + model_file)
-        os.system('wget ' + WIDERESNET18_URL)
+    if not os.access(os.path.join(MODEL_DIRECTORY, model_file), os.W_OK):
+        os.system('wget ' + WIDERESNET18_TAR_URL + model_file + ' -P ' + MODEL_DIRECTORY)
+        os.system('wget ' + WIDERESNET18_URL + ' -P ' + MODEL_DIRECTORY)
 
     # imported here since this model file may not be present in the beginning
     # and has been downloaded right before this
     # makes the model ready to run the forward pass
     from SceneDetection import wideresnet
     model = wideresnet.resnet18(num_classes=365)
-    checkpoint = torch.load(model_file, map_location=lambda storage, loc: storage)
+    checkpoint = torch.load(os.path.join(MODEL_DIRECTORY, model_file), map_location=lambda storage, loc: storage)
     state_dict = {str.replace(k,'module.',''): v for k,v in checkpoint['state_dict'].items()}
     model.load_state_dict(state_dict)
     model.eval()

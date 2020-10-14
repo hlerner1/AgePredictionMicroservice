@@ -1,6 +1,6 @@
 import asyncio
 
-from SceneDetection import scene_detec_model
+from SceneDetection import scene_detect_model
 
 async def init():
     """
@@ -16,7 +16,7 @@ def predict(image_file):
     Interface method between model and server. This signature must not be
     changed and your model must be able to predict given this input
     """
-    scene_detect_result = scene_detec_model.get_scene_attributes(image_file)
+    scene_detect_result = scene_detect_model.get_scene_attributes(image_file)
     return {
         "Category Confidence": scene_detect_result['category_results'],
         "Scene Attributes": scene_detect_result['attributes_result'],
