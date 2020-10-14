@@ -59,13 +59,13 @@ docker volume create --name=photoanalysisserver_images
 ``` 
 
 
-#### Step 1
+#### [Build & Run] Step 1
 Download dependencies with Docker and build container
 
 ```cmd
 docker-compose build
 ```
-#### Step 2
+#### [Build & Run] Step 2
 Start application
 ```cmd
 docker-compose up -d
@@ -128,7 +128,7 @@ applications. When a remote server wishes to use the model contained in the temp
 3. `POST /predict`: This will create a new predicted based off of the passed image file name in the request body. 
 
 #### Testing Model Predictions
-If you wish to test the webserver results, a good tool to use is [Postman](postman.com). This is used for simulating API
+If you wish to test the webserver results, a good tool to use is [Postman](https://postman.com). This is used for simulating API
 calls and viewing the results. To do the steps above, you may do the following in Postman:
 
 **Note:** `$PORT` in the steps below refers to the port number defined on line 2 of the `.env` file. `$NAME` in the steps 
