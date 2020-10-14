@@ -95,7 +95,8 @@ The `init` method in `model.py` will be run once upon initial startup. This meth
 the model is ready to make predictions.
 
 The `predict` method is what is used by the template to return prediction results. This method is passed a [file-like object](https://docs.python.org/3/library/io.html)
-containing the input image. The output of this method is a dictionary containing the results of the model prediction.
+containing the input image. The output of this method is a dictionary containing the results of the model prediction. The output should look something like this: `return {"someResultCategory": "actualResultValue"}`
+
 
 You may create any number of additional helper files in this template, and they will be automatically included in the
 Docker container. However, note that the signatures and return types of `init` and `predict` in `model.py` must not be changed.
