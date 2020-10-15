@@ -1,6 +1,8 @@
+pydantic
 fastapi
 pyinstaller
 setuptools
 uuid
 uvicorn
 python-multipart
+pillow

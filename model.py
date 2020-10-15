@@ -1,4 +1,6 @@
 import asyncio
+from PIL import Image
+
 
 async def init():
     """
@@ -12,8 +14,12 @@ async def init():
 def predict(image_file):
     """
     Interface method between model and server. This signature must not be
-    changed and your model must be able to predict given this input
+    changed and your model must be able to predict given a file-like object
+    with the image as an input.
     """
+
+    image = Image.open(image_file.name, mode='r')
+
     return {
         "someResultCategory": "actualResultValue",
     }
