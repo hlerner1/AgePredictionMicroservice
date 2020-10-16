@@ -15,7 +15,7 @@ deployment process is portable.
 ## Initial Setup
 
 To run this application, there are some commands that must be run. All of these should be
-done via the command line in the root directly of the project folder.
+done via the command line in the root directory of the project folder.
 
 Ensure that you have Docker running on your computer before attempting these commands.
 
