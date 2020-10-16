@@ -9,11 +9,3 @@ numpy==1.18.1
 Pillow==7.0.0
 redis
 tensorflow
-pretrainedmodels
-opencv-python
-torch
-torchvision
-scikit-learn
-pathlib
-matplotlib
-argparse
