@@ -2,15 +2,15 @@ version: "3.8"
 services:
   server:
     stdin_open: true
-    container_name: scene_predict_model
+    container_name: ${NAME}
     command: uvicorn main:app --host 0.0.0.0 --port ${PORT} --debug --reload-dir /app --log-level debug
     build:
-      context: ./server/
+      context: ./
       dockerfile: Dockerfile
     environment:
       - GUNICORN_CMD_ARGS=--reload
     volumes:
-      - "./server/:/app"
+      - ./:/app
       - images:/app/images
     ports:
       - ${PORT}:${PORT}
