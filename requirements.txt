@@ -6,3 +6,11 @@ uuid
 uvicorn
 python-multipart
 pillow
+numpy
+scikit-learn
+matplotlib
+pandas
+pretrainedmodels
+opencv-python
+torch
+torchvision
