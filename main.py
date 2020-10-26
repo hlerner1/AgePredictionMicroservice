@@ -5,14 +5,21 @@ import logging
 import asyncio
 from model import predict, init
 from pydantic import BaseSettings
-
+import requests
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
+import os
 
 class Settings(BaseSettings):
     ready_to_predict = False
 
+WAIT_TIME = 10
 
 settings = Settings()
 app = FastAPI()
+connected = False
+pool = ThreadPoolExecutor(10)
 
 # Must have CORSMiddleware to enable localhost client and server
 origins = [
@@ -33,6 +40,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def ping_server(server_port, model_port, model_name):
+    """
+    Periodically ping the server to make sure that
+    it is active.
+    """
+    global connected
+    while connected:
+        try:
+            r = requests.get('http://host.docker.internal:' + str(server_port) + '/')
+            r.raise_for_status()
+            time.sleep(WAIT_TIME)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            connected = False
+            logger.debug("Server " + model_name + " is not responsive. Retry registering...")
+    register_model_to_server(server_port, model_port, model_name)
+
+
+def register_model_to_server(server_port, model_port, model_name):
+    """
+    Send notification to the server with the model name and port to register the microservice
+    It retries until a connection with the server is established
+    """
+    global connected
+    while not connected:
+        try:
+            r = requests.post('http://host.docker.internal:' + str(server_port) + '/register', json = {"modelName": model_name, "modelPort": model_port})
+            r.raise_for_status()
+            connected = True
+            logger.debug('Registering to server succeeds.')
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            logger.debug('Registering to server fails. Retry in ' + str(WAIT_TIME) + ' seconds')
+            time.sleep(WAIT_TIME)
+            continue
+    ping_server(server_port, model_port, model_name)
+    
 
 @app.get("/")
 async def root():
@@ -43,7 +85,7 @@ async def root():
     return {"MLMicroserviceTemplate is Running!"}
 
 
-@app.post("/status")
+@app.on_event("startup")
 async def initial_startup():
     """
     Calls the init() method in the model and prepares the model to receive predictions. The init
@@ -53,6 +95,12 @@ async def initial_startup():
     :return: {"result": "starting"}
     """
     # Run startup task async
+    load_dotenv()
+
+    # Register the model to the server in a separate thread to avoid meddling with
+    # initializing the service which might be used directly by other client later on
+    future = pool.submit(register_model_to_server, os.getenv('SERVER_PORT'), os.getenv('PORT'), os.getenv('NAME'))
+
     init_task = asyncio.create_task(init())
     settings.ready_to_predict = True
     return {"result": "starting"}
