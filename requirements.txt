@@ -6,6 +6,8 @@ uuid
 uvicorn
 python-multipart
 pillow
+python-dotenv
+requests
 numpy
 scikit-learn
 matplotlib
