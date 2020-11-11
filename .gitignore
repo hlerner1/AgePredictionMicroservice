@@ -1,1 +1,3 @@
 .idea
+three_class_trained_age_recognition_model.pth
+face_detector/dsfd_inference/dsfd/weights/WIDERFace_DSFD_RES152.pth

@@ -8,3 +8,11 @@ python-multipart
 pillow
 python-dotenv
 requests
+numpy
+scikit-learn
+matplotlib
+pandas
+pretrainedmodels
+opencv-python
+torch
+torchvision
